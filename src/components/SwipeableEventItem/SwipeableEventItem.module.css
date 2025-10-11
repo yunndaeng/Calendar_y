@@ -1,0 +1,44 @@
+.wrapper {
+    position: relative; /* 자식 요소들의 기준점 */
+    border-radius: 8px;
+    overflow: hidden; /* 둥근 모서리 밖으로 나가는 요소 숨김 */
+    margin-bottom: 8px;
+  }
+  
+  .content {
+    position: relative;
+    z-index: 2; /* 삭제 버튼보다 위에 오도록 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    color: white;
+    cursor: grab;
+  }
+  
+  .checkButton {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: transparent;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .deleteButtonContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    z-index: 1; /* 내용보다 아래에 오도록 */
+  }
+  
+  .deleteButton {
+    height: 100%;
+    border: none;
+    background-color: #ca4131; /* 빨간색 배경 */
+    color: white;
+    padding: 0 24px;
+    cursor: pointer;
+  }

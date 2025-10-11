@@ -1,0 +1,173 @@
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* ✨ 모달을 하단에 배치 */
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 300px;
+  height: 450px;
+  max-height: 60vh;/* 최대 높이를 화면의 60%로 제한 */
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- 새로 추가된 스타일 --- */
+
+.modalHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.modalHeader span {
+  font-size: 16px;
+  color: #868e96;
+}
+
+.eventList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  overflow-y: auto;
+}
+
+.eventListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.eventListItem span {
+  font-size: 12px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.eventListItem button {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.addTodoContainer {
+  margin-top: auto;
+  background-color: #f1f3f5;
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  color: #868e96;
+  font-size: 16px;
+}
+
+.addTodoContainer input {
+  width: 100%;
+  background-color: #f1f3f5;
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  
+}
+
+/* EventModal.module.css 파일 가장 아래에 추가 */
+
+/* --- Category Modal Styles --- */
+.categoryModalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2); /* 기존 모달보다 연하게 */
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* 화면 하단에 위치 */
+  z-index: 1100; /* 기존 모달보다 위에 오도록 */
+}
+
+.categoryModalContent {
+  background-color: white;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  padding-bottom: 40px; /* 하단 여백 추가 */
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-sizing: border-box;
+}
+
+.categoryModalContent h4 {
+  margin-top: 0;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.categoryGrid {
+  display: flex;         /* 자식(categoryItem)들을 가로로 나열 */
+  justify-content: center; /* 그룹 전체를 중앙에 배치 */
+  gap: 100px;             /* 각 아이템 사이의 간격 */
+}
+
+/* 아이템 내부를 세로로 정렬하는 자식 */
+.categoryItem {
+  display: flex;
+  flex-direction: column; /* 아이콘과 텍스트를 세로로 쌓음 */
+  align-items: center;      /* 내부 요소들을 가로 중앙에 정렬 */
+  gap: 8px;
+  cursor: pointer;
+}
+
+.categoryItem span {
+  font-size: 14px;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex; /* SVG 아이콘 중앙 정렬을 위해 추가 */
+  align-items: center;
+  justify-content: center;
+}
+
+/* 아이콘 색상 (임시) */
+.iconSchedule {
+  background-color: #ff6b6b; /* 빨간색 */
+}
+.iconTodo {
+  background-color: #9775fa; /* 보라색 */
+}
+.iconInterval {
+  background-color: #4dabf7; /* 파란색 */
+}

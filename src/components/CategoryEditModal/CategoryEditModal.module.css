@@ -1,0 +1,90 @@
+/* src/components/CategoryEditModal/CategoryEditModal.module.css */
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f7f6; /* 전체 배경을 회색으로 */
+    z-index: 1400;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 5vh;
+    box-sizing: border-box;
+    animation: slideInFromRight 0.3s ease-out;
+  }
+
+  .contentWrapper {
+    max-width: 420px;
+    width: 100%;
+    background-color: white;
+    min-height: 85vh;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  @keyframes slideInFromRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #f1f3f5;
+  }
+  
+  .header h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .backButton, .addButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  
+  .categoryList {
+    padding: 0 16px;
+    max-height: calc(100vh - 70px); /* 헤더 높이를 제외한 화면 높이 */
+    overflow-y: auto; /* 스크롤 가능하게 */
+  }
+  
+  .listItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f5;
+  }
+  
+  .leftContent {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .colorDot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+  
+  .listItem span {
+    font-size: 16px;
+    color: #343a40;
+  }
+  
+  .rightContent {
+    cursor: grab; /* 순서 변경 가능함을 나타내는 커서 */
+  }

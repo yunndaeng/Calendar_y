@@ -1,0 +1,101 @@
+.pickerContainer {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 320px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  height: 250px; /* 컨테이너 전체 높이 고정 */
+  padding-bottom: 60px; /* 하단 버튼 영역 확보 */
+  box-sizing: border-box;
+
+  /* ✨ 핵심: 컬럼들을 가로로 배치 */
+  display: flex;
+  justify-content: center;
+}
+
+.pickerColumn {
+  flex: 1; /* 컬럼이 동일한 너비를 갖도록 */
+  height: 100%; /* 부모 높이를 꽉 채움 */
+  position: relative;
+  overflow: hidden; /* 내부 스크롤 영역이 밖으로 나가지 않도록 */
+}
+
+.pickerList {
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  /* ✨ 패딩을 스크롤 영역에 직접 적용 */
+  padding: 104px 0; /* (전체높이 250 - 버튼높이 60 - 아이템높이 42)/2  */
+  box-sizing: border-box;
+}
+
+.pickerList::-webkit-scrollbar {
+  display: none;
+}
+
+.pickerItem {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  font-size: 16px;
+  color: #aaa;
+  transition: all 0.2s ease-in-out;
+}
+
+.pickerItem.selected {
+  color: #000;
+  font-weight: 600;
+}
+
+.pickerHighlight {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  right: 10px;
+  /* ✨ 버튼 영역을 고려하여 위치 재조정 */
+  margin-top: -30px; /* (버튼높이 60 / 2) 만큼 위로 올림 */
+  transform: translateY(-50%) translateY(50px);  height: 42px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pickerFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border-top: 1px solid #f0f0f0;
+  background-color: white;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  z-index: 3;
+}
+
+.pickerButton {
+  border: none;
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 48%;
+}
+
+.pickerButton.primary {
+  background-color: #ff9191;
+  color: white;
+}
