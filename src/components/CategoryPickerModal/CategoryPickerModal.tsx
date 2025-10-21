@@ -1,45 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './CategoryPickerModal.module.css';
-import { CategoryEditModal } from '../CategoryEditModal/CategoryEditModal';
 
+// 타입 정의
 type Category = { name: string; color: string; };
+
 interface CategoryPickerModalProps {
-  onClose: () => void;
-  onSelectCategory: (category: any) => void;
+  onClose: () => void; // 부모(App)에게 닫기 신호
+  onSelect: (category: Category) => void; // 부모(App)에게 선택된 카테고리 전달
+  categories: Category[]; // 부모(App)로부터 받은 전체 카테고리 목록
+  onEdit: () => void; // 부모(App)에게 편집 창 열기 신호
 }
 
-export function CategoryPickerModal({ onClose, onSelectCategory }: CategoryPickerModalProps) {
-  const [categories, setCategories] = useState<Category[]>([
-    { name: '친구', color: '#ffc9c9' }, { name: '할 일', color: '#d0bfff' },
-    { name: '공부', color: '#91a7ff' }, { name: '마감일', color: '#ff922b' },
-  ]);
-  const [isEditModalOpen, setEditModalOpen] = useState(false);
+export function CategoryPickerModal({ onClose, onSelect, categories, onEdit }: CategoryPickerModalProps) {
+  // isEditModalOpen state 삭제
 
   return (
-    <>
-      <div className={styles.backdrop} onClick={onClose}>
-        <div className={styles.content} onClick={(e) => e.stopPropagation()}>
-          <div className={styles.header}>
-            <h4>카테고리 선택</h4>
-            <button className={styles.editButton} onClick={() => setEditModalOpen(true)}>편집</button>
-          </div>
-          <div className={styles.grid}>
-            {categories.map((category) => (
-              <div key={category.name} className={styles.item} onClick={() => onSelectCategory(category)}>
-                <div className={styles.iconWrapper}><div className={styles.colorCircle} style={{ backgroundColor: category.color }}></div></div>
-                <span>{category.name}</span>
+    <div className={styles.backdrop} onClick={onClose}>
+      <div className={styles.content} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.header}>
+          <h4>카테고리 선택</h4>
+          <button className={styles.editButton} onClick={onEdit}>편집</button>
+        </div>
+        <div className={styles.grid}>
+          {categories.map((category) => (
+            <div key={category.name} className={styles.item} onClick={() => onSelect(category)}>
+              <div className={styles.iconWrapper}>
+                <div className={styles.colorCircle} style={{ backgroundColor: category.color }}></div>
               </div>
-            ))}
-          </div>
+              <span>{category.name}</span>
+            </div>
+          ))}
         </div>
       </div>
-      {isEditModalOpen && (
-        <CategoryEditModal
-          onClose={() => setEditModalOpen(false)}
-          categories={categories}
-          setCategories={setCategories}
-        />
-      )}
-    </>
+    </div>
+    // CategoryEditModal 렌더링 코드는 App.tsx로 이동했으므로 삭제
   );
 }

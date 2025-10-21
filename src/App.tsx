@@ -16,6 +16,9 @@ import './App.css';
 import { DatePicker } from './components/DatePicker';
 import { EventModal } from './components/EventModal';
 import { ScheduleModal } from './components/ScheduleModal/ScheduleModal';
+import { CategoryPickerModal } from './components/CategoryPickerModal/CategoryPickerModal';
+import { CategoryEditModal } from './components/CategoryEditModal/CategoryEditModal';
+import { CategoryAddModal } from './components/CategoryAddModal/CategoryAddModal';
 
 // 타입 정의
 type Event = { date: string; title: string; type: 'schedule' | 'todo'; color: string; };
@@ -26,17 +29,31 @@ function App() {
   const [direction, setDirection] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [categories, setCategories] = useState<Category[]>([
+    { name: '친구', color: '#ffc9c9' }, { name: '할 일', color: '#d0bfff' },
+    { name: '공부', color: '#91a7ff' }, { name: '마감일', color: '#ff922b' },
+  ]);
 
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isScheduleModalOpen, setScheduleModalOpen] = useState(false);
-  
-  const handleSaveEvent = (title: string, category: Category) => {
+  // 모든 모달을 관리할 단일 상태
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+  // ScheduleModal에서 사용할 임시 카테고리 상태 (선택된 카테고리 저장용)
+  const [tempCategory, setTempCategory] = useState<Category>({ name: '카테고리', color: '#f1f3f5' });
+
+  // --- 핸들러 함수들 ---
+  const handleSaveSchedule = (title: string, category: Category) => {
     if (selectedDate) {
       const newEvent: Event = { date: format(selectedDate, 'yyyy-MM-dd'), title, type: 'schedule', color: category.color };
       setEvents((prev) => [...prev, newEvent]);
     }
-    setScheduleModalOpen(false);
+    setActiveModal(null); // 모든 모달 닫기
+  };
+
+  const handleSaveTodo = (title: string, type: 'schedule' | 'todo') => {
+    if (selectedDate) {
+      const newEvent: Event = { date: format(selectedDate, 'yyyy-MM-dd'), title, type, color: type === 'todo' ? '#d0bfff' : '#a5d8ff' };
+      setEvents(prev => [...prev, newEvent]);
+    }
+    // '할일'은 추가 후에도 창 유지 (setActiveModal(null) 없음)
   };
 
   const handleDeleteEvent = (indexToDelete: number) => {
@@ -46,30 +63,14 @@ function App() {
     const eventToDelete = dayEvents[indexToDelete];
     setEvents(prevEvents => prevEvents.filter(event => event !== eventToDelete));
   };
-  
-  // "완료" 버튼 기능 (기존과 동일)
+
   const handlePickerConfirm = (year: number, month: number) => {
-    const newDate = new Date(); 
-    newDate.setFullYear(year); 
-    newDate.setMonth(month);
-    setDirection(newDate > currentDate ? 1 : -1); 
-    setCurrentDate(newDate); 
-    setIsPickerOpen(false);
-  };
-  
-  // "오늘" 버튼을 위한 기능
-  const handleGoToToday = () => {
-    const today = new Date(); 
-    setDirection(today > currentDate ? 1 : -1); 
-    setCurrentDate(today); 
-    setIsPickerOpen(false);
+    const newDate = new Date(); newDate.setFullYear(year); newDate.setMonth(month);
+    setDirection(newDate > currentDate ? 1 : -1); setCurrentDate(newDate); setActiveModal(null);
   };
 
-  const handleCategorySelect = (categoryType: string) => {
-    if (categoryType === 'schedule') {
-      setIsModalOpen(false);
-      setScheduleModalOpen(true);
-    }
+  const handleGoToToday = () => {
+    const today = new Date(); setDirection(today > currentDate ? 1 : -1); setCurrentDate(today); setActiveModal(null);
   };
 
   const prevMonth = () => { setDirection(-1); setCurrentDate(subMonths(currentDate, 1)); };
@@ -80,9 +81,14 @@ function App() {
   };
 
   const handleDateClick = (day: Date) => {
-    if (!isSameMonth(day, startOfMonth(currentDate))) return;
+    if (!isSameMonth(day, monthStart)) return;
     setSelectedDate(day);
-    setIsModalOpen(true);
+    setActiveModal('event');
+  };
+
+  const handleAddCategory = (newCategory: Category) => {
+    setCategories(prev => [...prev, newCategory]);
+    setActiveModal('categoryEdit'); // 카테고리 추가 후 편집 화면으로 복귀
   };
 
   const monthStart = startOfMonth(currentDate);
@@ -95,39 +101,11 @@ function App() {
   return (
     <div className="app-container">
       <header className="calendar-header">
-        <div className="header-left" onClick={() => setIsPickerOpen(true)}>
+        <div className="header-left" onClick={() => setActiveModal('datePicker')}>
           <h1>{format(currentDate, 'yyyy년 M월')}</h1>
           <span className="dropdown-arrow">▼</span>
         </div>
       </header>
-      
-      {/* ✅ DatePicker에 onGoToToday 속성을 추가하여 오류를 해결합니다. */}
-      {isPickerOpen && (
-        <DatePicker 
-          initialDate={currentDate} 
-          onConfirm={handlePickerConfirm}
-          onClose={() => setIsPickerOpen(false)}
-          onGoToToday={handleGoToToday}
-        />
-      )}
-      
-      {isModalOpen && selectedDate && (
-        <EventModal
-          date={selectedDate}
-          events={events.filter(e => e.date === format(selectedDate, 'yyyy-MM-dd'))}
-          onClose={() => setIsModalOpen(false)}
-          onDelete={handleDeleteEvent}
-          onCategorySelect={handleCategorySelect}
-          onSave={(title) => console.log('Saved:', title)} 
-        />
-      )}
-
-      {isScheduleModalOpen && (
-        <ScheduleModal
-          onClose={() => setScheduleModalOpen(false)}
-          onSave={handleSaveEvent}
-        />
-      )}
 
       <div className="calendar-body-container">
         <AnimatePresence initial={false} custom={direction}>
@@ -153,12 +131,62 @@ function App() {
       </div>
 
       <footer className="tab-bar">
-        <div className="tab-item">홈</div>
-        <div className="tab-item">캘린더</div>
-        <div className="tab-item">할일</div>
+        <div className="tab-item">홈</div><div className="tab-item">캘린더</div><div className="tab-item">할일</div>
       </footer>
+
+      {/* --- Modals managed by activeModal state --- */}
+      {activeModal === 'datePicker' && (
+      <DatePicker 
+        initialDate={currentDate} 
+        onConfirm={handlePickerConfirm} 
+        onClose={() => setActiveModal(null)} // ✨ 닫기 기능 연결
+       onGoToToday={handleGoToToday} />)}
+
+      {activeModal === 'event' && selectedDate && (
+        <EventModal
+          date={selectedDate}
+          events={events.filter(e => e.date === format(selectedDate, 'yyyy-MM-dd'))}
+          onClose={() => setActiveModal(null)}
+          onSave={handleSaveTodo}
+          onDelete={handleDeleteEvent}
+          onOpenSchedule={() => setActiveModal('schedule')}
+        />
+      )}
+      {activeModal === 'schedule' && (
+        <ScheduleModal
+          onClose={() => setActiveModal('event')}
+          onSave={handleSaveSchedule}
+          onOpenCategoryPicker={() => setActiveModal('categoryPicker')}
+          selectedCategory={tempCategory} // ✨ 임시 카테고리 상태 전달
+        />
+      )}
+      {activeModal === 'categoryPicker' && (
+        <CategoryPickerModal
+          onClose={() => setActiveModal('schedule')}
+          onSelect={(category) => {
+            setTempCategory(category); // ✨ 선택된 카테고리를 임시 상태에 저장
+            setActiveModal('schedule');
+          }}
+          categories={categories}
+          onEdit={() => setActiveModal('categoryEdit')}
+        />
+      )}
+      {activeModal === 'categoryEdit' && (
+        <CategoryEditModal
+          onClose={() => setActiveModal('categoryPicker')}
+          categories={categories}
+          setCategories={setCategories}
+          onAdd={() => setActiveModal('categoryAdd')}
+        />
+      )}
+      {activeModal === 'categoryAdd' && (
+        <CategoryAddModal
+          onClose={() => setActiveModal('categoryEdit')}
+          onAddCategory={handleAddCategory}
+          existingCategories={categories}
+        />
+      )}
     </div>
   );
 }
-
 export default App;
