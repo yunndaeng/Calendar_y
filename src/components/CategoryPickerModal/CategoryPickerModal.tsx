@@ -1,8 +1,6 @@
 import React from 'react';
 import styles from './CategoryPickerModal.module.css';
-
-// 타입 정의
-type Category = { name: string; color: string; };
+import type { Category } from '../../types';
 
 interface CategoryPickerModalProps {
   onClose: () => void; // 부모(App)에게 닫기 신호
@@ -11,7 +9,7 @@ interface CategoryPickerModalProps {
   onEdit: () => void; // 부모(App)에게 편집 창 열기 신호
 }
 
-export function CategoryPickerModal({ onClose, onSelect, categories, onEdit }: CategoryPickerModalProps) {
+export function CategoryPickerModal({ onClose, onSelect, categories, onEdit}: CategoryPickerModalProps) {
   // isEditModalOpen state 삭제
 
   return (

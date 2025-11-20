@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import styles from './ScheduleModal.module.css';
-
-// 타입 정의 (CategoryPickerModal과 중복되지만, 독립성을 위해 유지)
-type Category = { name: string; color: string; };
+import type { Category } from '../../types';
 
 interface ScheduleModalProps {
   onClose: () => void; // 부모(App)에게 닫기 신호
@@ -36,7 +34,7 @@ export function ScheduleModal({ onClose, onSave, onOpenCategoryPicker, selectedC
           <input type="text" placeholder="일정 제목" className={styles.titleInput} value={title} onChange={(e) => setTitle(e.target.value)} autoFocus />
         </div>
         <div className={styles.tags} onClick={onOpenCategoryPicker}>
-          <div className={styles.tag} style={{ backgroundColor: selectedCategory.color, color: selectedCategory.name === '카테고리' ? '#333' : 'white' }}>
+          <div className={styles.tag} style={{ backgroundColor: selectedCategory.color, color:'white' }}>
             {selectedCategory.name}
           </div>
         </div>

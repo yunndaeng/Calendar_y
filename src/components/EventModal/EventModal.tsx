@@ -3,13 +3,7 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import styles from './EventModal.module.css';
 import { SwipeableEventItem } from '../SwipeableEventItem/SwipeableEventItem';
-// CategoryPickerModal import 불필요
-
-// App.tsx로부터 받을 데이터 타입 정의
-type Category = {
-  name: string;
-  color: string;
-};
+import type { Category } from '../../types';
 
 interface EventModalProps {
   date: Date;

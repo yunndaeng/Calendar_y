@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { Category, Event } from './types';
 import {
   format,
   startOfMonth,
@@ -19,33 +20,33 @@ import { ScheduleModal } from './components/ScheduleModal/ScheduleModal';
 import { CategoryPickerModal } from './components/CategoryPickerModal/CategoryPickerModal';
 import { CategoryEditModal } from './components/CategoryEditModal/CategoryEditModal';
 import { CategoryAddModal } from './components/CategoryAddModal/CategoryAddModal';
-
-// 타입 정의
-type Event = { date: string; title: string; type: 'schedule' | 'todo'; color: string; };
-type Category = { name: string; color: string; };
+import { useCategories, EMPTY_CATEGORY } from './hooks/useCategories';
 
 function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [direction, setDirection] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
-  const [categories, setCategories] = useState<Category[]>([
-    { name: '친구', color: '#ffc9c9' }, { name: '할 일', color: '#d0bfff' },
-    { name: '공부', color: '#91a7ff' }, { name: '마감일', color: '#ff922b' },
-  ]);
+  const { categories, addCategory, reorderCategories } = useCategories();
 
   // 모든 모달을 관리할 단일 상태
   const [activeModal, setActiveModal] = useState<string | null>(null);
   // ScheduleModal에서 사용할 임시 카테고리 상태 (선택된 카테고리 저장용)
-  const [tempCategory, setTempCategory] = useState<Category>({ name: '카테고리', color: '#f1f3f5' });
+  const [tempCategory, setTempCategory] = useState<Category>(EMPTY_CATEGORY);
 
   // --- 핸들러 함수들 ---
   const handleSaveSchedule = (title: string, category: Category) => {
     if (selectedDate) {
-      const newEvent: Event = { date: format(selectedDate, 'yyyy-MM-dd'), title, type: 'schedule', color: category.color };
+      const newEvent: Event = { 
+        date: format(selectedDate, 'yyyy-MM-dd'), 
+        title, 
+        type: 'schedule', 
+        color: category.color 
+      };
       setEvents((prev) => [...prev, newEvent]);
     }
     setActiveModal(null); // 모든 모달 닫기
+    setTempCategory(EMPTY_CATEGORY);
   };
 
   const handleSaveTodo = (title: string, type: 'schedule' | 'todo') => {
@@ -87,7 +88,7 @@ function App() {
   };
 
   const handleAddCategory = (newCategory: Category) => {
-    setCategories(prev => [...prev, newCategory]);
+    addCategory(newCategory);
     setActiveModal('categoryEdit'); // 카테고리 추가 후 편집 화면으로 복귀
   };
 
@@ -154,7 +155,10 @@ function App() {
       )}
       {activeModal === 'schedule' && (
         <ScheduleModal
-          onClose={() => setActiveModal('event')}
+          onClose={() => {
+            setActiveModal('event');
+            setTempCategory(EMPTY_CATEGORY);
+          }}
           onSave={handleSaveSchedule}
           onOpenCategoryPicker={() => setActiveModal('categoryPicker')}
           selectedCategory={tempCategory} // ✨ 임시 카테고리 상태 전달
@@ -175,7 +179,7 @@ function App() {
         <CategoryEditModal
           onClose={() => setActiveModal('categoryPicker')}
           categories={categories}
-          setCategories={setCategories}
+          onReorderCategories={reorderCategories}
           onAdd={() => setActiveModal('categoryAdd')}
         />
       )}
