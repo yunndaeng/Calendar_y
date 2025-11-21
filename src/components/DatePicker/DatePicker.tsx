@@ -36,7 +36,16 @@ export function DatePicker({ onConfirm, onClose, initialDate, onGoToToday }: Pic
             clearTimeout(yearTimeout);
             yearTimeout = setTimeout(() => {
                 if (!yearEl) return;
-                const scrollIndex = Math.round(yearEl.scrollTop / itemHeight);
+                let scrollIndex = Math.round(yearEl.scrollTop / itemHeight);
+
+                if(scrollIndex < 0) scrollIndex = 0;
+                if(scrollIndex > yearArray.length - 1) scrollIndex = yearArray.length - 1;
+
+                yearEl.scrollTo({
+                    top: scrollIndex * itemHeight,
+                    behavior: 'smooth'
+                })
+
                 const year = yearArray[scrollIndex];
                 setSelectedYear(year);
             }, 150);
@@ -47,7 +56,16 @@ export function DatePicker({ onConfirm, onClose, initialDate, onGoToToday }: Pic
             clearTimeout(monthTimeout);
             monthTimeout = setTimeout(() => {
                 if (!monthEl) return;
-                const scrollIndex = Math.round(monthEl.scrollTop / itemHeight);
+                let scrollIndex = Math.round(monthEl.scrollTop / itemHeight);
+
+                if(scrollIndex < 0) scrollIndex = 0;
+                if(scrollIndex > 11) scrollIndex = 11;
+
+                monthEl.scrollTo({
+                    top: scrollIndex * itemHeight,
+                    behavior: 'smooth'
+                })
+
                 const month = scrollIndex + 1;
                 setSelectedMonth(month);
             }, 150);

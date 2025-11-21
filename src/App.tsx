@@ -28,7 +28,7 @@ function App() {
   const [direction, setDirection] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
-  const { categories, addCategory, reorderCategories, updateCategory, deleteCategory } = useCategories();
+  const { categories, setCategories, addCategory, reorderCategories, updateCategory, deleteCategory } = useCategories();
 
   // 모든 모달을 관리할 단일 상태
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -180,7 +180,7 @@ function App() {
         <CategoryEditModal
           onClose={() => setActiveModal('categoryPicker')}
           categories={categories}
-          onReorderCategories={reorderCategories}
+          onReorderCategories={setCategories}
           onAdd={() => setActiveModal('categoryAdd')}
           onUpdateCategory={updateCategory}
           onDeleteCategory={deleteCategory}

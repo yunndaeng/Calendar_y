@@ -43,6 +43,7 @@ export const useCategories = () => {
   // 밖에서 쓸 수 있게 함수들과 데이터를 반환(return)해줍니다.
   return {
     categories,
+    setCategories,
     addCategory,
     deleteCategory,
     updateCategory,

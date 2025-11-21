@@ -129,7 +129,7 @@ body {
 
 .date-grid .date-cell {
   cursor: pointer;
-  font-size: 8px;
+  font-size: 12px;
   transition: background-color 0.2s;
   border-top: 1px solid #f0f0f0;
   justify-content: flex-start;

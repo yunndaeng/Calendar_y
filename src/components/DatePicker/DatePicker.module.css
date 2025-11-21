@@ -30,7 +30,7 @@
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   /* ✨ 패딩을 스크롤 영역에 직접 적용 */
-  padding: 104px 0; /* (전체높이 250 - 버튼높이 60 - 아이템높이 42)/2  */
+  padding: 74px 0; /* (전체높이 250 - 버튼높이 60 - 아이템높이 42)/2  */
   box-sizing: border-box;
 }
 
@@ -47,6 +47,9 @@
   font-size: 16px;
   color: #aaa;
   transition: all 0.2s ease-in-out;
+  border: 2px solid transparent;
+  border-radius : 8px;
+  box-sizing: border-box;
 }
 
 .pickerItem.selected {
@@ -60,7 +63,7 @@
   left: 10px;
   right: 10px;
   /* ✨ 버튼 영역을 고려하여 위치 재조정 */
-  margin-top: -30px; /* (버튼높이 60 / 2) 만큼 위로 올림 */
+  margin-top: -80px; /* (버튼높이 60 / 2) 만큼 위로 올림 */
   transform: translateY(-50%) translateY(50px);  height: 42px;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;

@@ -84,7 +84,7 @@ export function CategoryEditModal({ onClose, categories, onAdd, onUpdateCategory
             <div className={styles.contentWrapper}>
                 <div className={styles.header}>
                     <button onClick={onClose} className={styles.backButton}>
-                        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M15 18L9 12L15 6" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" ><path d="M15 18L9 12L15 6" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
                     <h4>카테고리 편집</h4>
                     <button onClick={onAdd} className={styles.addButton}>
