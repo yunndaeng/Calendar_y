@@ -1,10 +1,12 @@
 import React from 'react';
+import { useState } from 'react';
 import styles from './CategoryEditModal.module.css';
 import type { Category } from '../../types';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { CategoryFormModal } from '../CategoryFormModal/CategoryFormModal';
 
 // 드래그 가능한 아이템 컴포넌트 
 function SortableItem({ category }: { category: Category }) {
@@ -42,13 +44,15 @@ interface CategoryEditModalProps {
     onClose: () => void; // 부모(App)에게 닫기 신호
     categories: Category[]; // 부모(App)로부터 받은 전체 카테고리 목록
     onAdd: () => void; // 부모(App)에게 추가 창 열기 신호
+    onUpdateCategory: (oldName: string, newCategory: Category) => void; // 부모(App)에게 카테고리 수정 신호
+    onDeleteCategory: (categoryName: string) => void; // 부모(App)에게 카테고리 삭제 신호
     onReorderCategories: (newCategories: Category[]) => void; // 부모(App)에게 카테고리 재정렬 신호
 }
 
 
 
-export function CategoryEditModal({ onClose, categories, onAdd, onReorderCategories }: CategoryEditModalProps) {
-
+export function CategoryEditModal({ onClose, categories, onAdd, onUpdateCategory, onDeleteCategory, onReorderCategories }: CategoryEditModalProps) {
+    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
 
@@ -61,6 +65,19 @@ export function CategoryEditModal({ onClose, categories, onAdd, onReorderCategor
             onReorderCategories(newOrder);
         }
     };
+
+    if (editingCategory) {
+        return (
+          <CategoryFormModal
+            onClose={() => setEditingCategory(null)} // 닫으면 다시 목록으로
+            onSaveCategory={() => {}} // 수정 모드에선 안 씀
+            existingCategories={categories}
+            initialCategory={editingCategory} // ✨ 수정할 데이터 전달
+            onUpdateCategory={onUpdateCategory} // ✨ 수정 함수 전달
+            onDeleteCategory={onDeleteCategory} // ✨ 삭제 함수 전달
+          />
+        );
+      }
 
     return (
         <div className={styles.modalOverlay}>
@@ -78,12 +95,34 @@ export function CategoryEditModal({ onClose, categories, onAdd, onReorderCategor
                     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                         <SortableContext items={categories.map(c => c.name)} strategy={verticalListSortingStrategy}>
                             {categories.map((category) => (
-                                // 기존 div 대신 SortableItem 사용
-                                <SortableItem key={category.name} category={category} />
+                                <div 
+                                    key={category.name}
+                                    onClick={() => setEditingCategory(category)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                <SortableItem category={category} />
+                                </div>
                             ))}
                         </SortableContext>
                     </DndContext>
                 </div>
+
+                {editingCategory && (
+                    <CategoryFormModal
+                        onClose={() => setEditingCategory(null)}
+                        onSaveCategory={() => {}}
+                        existingCategories={categories}
+                        initialCategory={editingCategory}
+                        onUpdateCategory={(oldName, newCategory) => {
+                            onUpdateCategory(oldName, newCategory);
+                            setEditingCategory(null);
+                        }}
+                        onDeleteCategory={(categoryName) => {
+                            onDeleteCategory(categoryName);
+                            setEditingCategory(null);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

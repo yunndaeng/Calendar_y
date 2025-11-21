@@ -1,7 +1,8 @@
 // src/components/CategoryAddModal/CategoryAddModal.tsx
 
-import React, { useState } from 'react';
-import styles from './CategoryAddModal.module.css';
+import React, { useState, useEffect } from 'react';
+import styles from './CategoryFormModal.module.css';
+import type { Category } from '../../types';
 
 // 8가지 색상 팔레트 정의
 const COLORS = [
@@ -16,17 +17,21 @@ const COLORS = [
 ];
 
 // 부모 컴포넌트로부터 받을 props 타입 정의
-interface CategoryAddModalProps {
+interface CategoryFormModalProps {
   onClose: () => void;
-  onAddCategory: (category: { name: string; color: string }) => void;
+  onSaveCategory: (category: { name: string; color: string }) => void;
   existingCategories: Array<{ name:string; color: string }>;
+  initialCategory?: Category;  //수정할 카테고리 정보
+  onUpdateCategory?: (oldName: string, newCategory: Category) => void; //수정
+  onDeleteCategory?: (categoryName: string) => void; //삭제
 }
 
-export function CategoryAddModal({ onClose, onAddCategory }: CategoryAddModalProps) {
-  const [categoryName, setCategoryName] = useState('');
-  // 요청사항에 따라 첫 번째 색상을 기본 선택 값으로 설정
-  const [selectedColor, setSelectedColor] = useState<string>(COLORS[0]);
+export function CategoryFormModal({ onClose, onSaveCategory, existingCategories, initialCategory, onUpdateCategory, onDeleteCategory  }: CategoryFormModalProps) {
+  const [categoryName, setCategoryName] = useState(initialCategory?.name || '');
+  const [selectedColor, setSelectedColor] = useState<string>(initialCategory?.color || COLORS[0]);
   const [isPrivate, setIsPrivate] = useState(false);
+
+  const isEditMode = !!initialCategory;
 
   const handleSave = () => {
     // 카테고리 이름이 비어있는지 확인
@@ -34,13 +39,33 @@ export function CategoryAddModal({ onClose, onAddCategory }: CategoryAddModalPro
       alert('카테고리 이름을 입력하세요.');
       return;
     }
+
+    const newCategory = { name: categoryName, color: selectedColor };
+
+    if (isEditMode && onUpdateCategory && initialCategory){
+      onUpdateCategory(initialCategory.name, newCategory);
+    } else {
+      onSaveCategory(newCategory);
+    }
+    onClose();
+
     // 선택된 색상이 없는 경우 확인 (현재 코드는 항상 기본값이 있으므로 이 경우는 거의 없음)
     if (!selectedColor) {
       alert('색상을 선택하세요.');
       return;
     }
     // onAddCategory 함수를 호출하여 부모 컴포넌트로 새 카테고리 정보 전달
-    onAddCategory({ name: categoryName, color: selectedColor });
+    onSaveCategory({ name: categoryName, color: selectedColor });
+  };
+
+  const handleDelete = () => {
+    if (isEditMode && onDeleteCategory && initialCategory){
+      if(window.confirm(`"${initialCategory.name}" 카테고리를 삭제하시겠습니까?`)){
+        onDeleteCategory(initialCategory.name);
+        onClose();
+      }
+    }
+    onClose();
   };
 
   return (
@@ -53,6 +78,12 @@ export function CategoryAddModal({ onClose, onAddCategory }: CategoryAddModalPro
               <path d="M15 18L9 12L15 6" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
+
+          {isEditMode && (
+            <button onClick={handleDelete} style={{ border: 'none', background: 'none', color: '#ff6b6b', fontWeight: 'bold', cursor: 'pointer' }}>
+              삭제
+            </button>
+          )} 
         </header>
 
         {/* 2. 카테고리 이름 입력 필드 */}
@@ -104,7 +135,7 @@ export function CategoryAddModal({ onClose, onAddCategory }: CategoryAddModalPro
 
         {/* 6. 저장 버튼 */}
         <button onClick={handleSave} className={styles.saveButton}>
-          저장
+          {isEditMode ? '수정 완료' : '저장'}
         </button>
       </div>
     </div>

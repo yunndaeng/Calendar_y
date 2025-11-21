@@ -19,15 +19,16 @@ import { EventModal } from './components/EventModal';
 import { ScheduleModal } from './components/ScheduleModal/ScheduleModal';
 import { CategoryPickerModal } from './components/CategoryPickerModal/CategoryPickerModal';
 import { CategoryEditModal } from './components/CategoryEditModal/CategoryEditModal';
-import { CategoryAddModal } from './components/CategoryAddModal/CategoryAddModal';
+import { CategoryFormModal } from './components/CategoryFormModal/CategoryFormModal';
 import { useCategories, EMPTY_CATEGORY } from './hooks/useCategories';
+
 
 function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [direction, setDirection] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
-  const { categories, addCategory, reorderCategories } = useCategories();
+  const { categories, addCategory, reorderCategories, updateCategory, deleteCategory } = useCategories();
 
   // 모든 모달을 관리할 단일 상태
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -181,12 +182,14 @@ function App() {
           categories={categories}
           onReorderCategories={reorderCategories}
           onAdd={() => setActiveModal('categoryAdd')}
+          onUpdateCategory={updateCategory}
+          onDeleteCategory={deleteCategory}
         />
       )}
       {activeModal === 'categoryAdd' && (
-        <CategoryAddModal
+        <CategoryFormModal
           onClose={() => setActiveModal('categoryEdit')}
-          onAddCategory={handleAddCategory}
+          onSaveCategory={handleAddCategory}
           existingCategories={categories}
         />
       )}
